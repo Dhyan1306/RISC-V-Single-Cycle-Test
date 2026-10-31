@@ -11,18 +11,20 @@ module if_stage (
 
     logic [31:0] next_pc;
 
-    // Calculate sequential next PC
+    // Calculate the next sequential instruction address
     assign pc_new = address + 32'd4;
 
-    // Select branch/jump target or sequential PC
+    // Select between branch/jump target and sequential address
     assign next_pc = and_out ? pc_signed_offset : pc_new;
 
-    // Program Counter register
+    // Program Counter with asynchronous active-high reset
     always_ff @(posedge clk or posedge reset) begin
-        if (reset)
+        if (reset) begin
             address <= 32'h8000_0000;
-        else if (!stall)
+        end
+        else if (!stall) begin
             address <= next_pc;
+        end
     end
 
 endmodule
